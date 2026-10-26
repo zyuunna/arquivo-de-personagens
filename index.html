@@ -1,0 +1,1075 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Arquivo de Personagens</title>
+<style>
+
+:root {
+    --paper: #fffaf2;
+    --gold: #cda879;
+    --gold-dark: #bd8d59;
+    --gold-pale: #f2e1c8;
+    --ink: #bd8956;
+    --line: var(--gold);
+}
+
+/* Configurações gerais */
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+    margin: 0;
+    min-height: 100%;
+    background: var(--paper);
+    color: var(--ink);
+}
+
+body {
+    font-family: 'Cormorant Garamond', Georgia, serif;
+    font-size: 16px;
+}
+
+button {
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+}
+
+/* Página principal */
+.page {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    padding: 18px 1px 30px;
+}
+
+/* Layout do perfil */
+.profile-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    gap: 28px;
+    align-items: start;
+}
+
+/* Coluna do retrato */
+.portrait-col {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* Moldura principal */
+.portrait-frame {
+ 
+
+    height: 116px;
+    width: 100%;
+    background: url('assets/fullbody-frame.png') center / contain no-repeat;
+    padding: 7% 7% 9%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+/* Imagem principal */
+.portrait-inner {
+    width: 100%;
+    height: 100%;
+    overflow: visible;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+}
+
+.portrait-inner img {
+    display: block;
+    width: 100%;
+    height: 108%;
+    object-fit: contain;
+    object-position: center bottom;
+}
+
+/* Texto provisório da imagem */
+.placeholder {
+    font-size: 14px;
+    text-align: center;
+    opacity: 0.75;
+    padding: 12px;
+    line-height: 1.4;
+}
+
+/* Botões Casual e Explorer */
+.mode-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+
+.mode-tabs button {
+    min-width: 82px;
+    padding: 7px 15px;
+    border: 1px solid var(--gold-dark);
+    background: transparent;
+    transition: background 0.15s, color 0.15s;
+}
+
+.mode-tabs button.active,
+.mode-tabs button:hover {
+    background: var(--gold-pale);
+}
+
+/* Coluna direita do perfil */
+.right-col {
+    min-width: 0;
+    padding-top: 7px;
+}
+
+/* Nome do personagem */
+.character-name {
+    font-size: clamp(21px, 2.4vw, 30px);
+    font-weight: 400;
+    margin: 0 0 12px;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+/* Organização das caixas de texto */
+.panels {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    min-width: 0;
+}
+
+/* Estilo compartilhado das molduras de texto */
+.data-panel,
+.description-panel {
+    position: relative;
+    width: 100%;
+    background-position: center;
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+    overflow: hidden;
+    min-width: 0;
+}
+
+/* Caixa de dados */
+.data-panel {
+    height: 132px;
+    background-image: url('assets/data-frame.png');
+}
+
+/* Caixa de descrição */
+.description-panel {
+    height: 206px;
+    background-image: url('assets/description-frame.png');
+}
+
+/* Títulos das caixas */
+.panel-title {
+    position: absolute;
+    z-index: 2;
+    margin: 0;
+    font-size: 18px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.04em;
+    font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+/* Posição do título DADOS */
+.data-panel .panel-title {
+    top: 3px;
+    left: 7%;
+    height: 18px;
+    display: flex;
+    align-items: center;
+}
+
+/* Posição do título DESCRIÇÃO */
+.description-panel .panel-title {
+    top: 5px;
+    left: 7%;
+    height: 22px;
+    display: flex;
+    align-items: center;
+}
+
+/* Texto dentro das caixas */
+.panel-body {
+    position: absolute;
+    inset: 30px 20px 12px;
+    padding: 0;
+    overflow: auto;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    line-height: 1.45;
+    font-size: 16px;
+}
+
+
+/* Texto dos dados */
+.data-panel .panel-body {
+    inset: 31px 20px 10px;
+    overflow: hidden;
+    white-space: normal;
+}
+
+/* Dados organizados em duas colunas */
+.data-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    grid-template-rows: repeat(3, auto);
+    column-gap: 12px;
+    row-gap: 9px;
+    align-content: center;
+    height: 100%;
+    font-size: 15px;
+    line-height: 1.3;
+    font-family: 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+}
+
+.data-item {
+    min-width: 0;
+    overflow-wrap: anywhere;
+}
+
+/* Marca-texto nos títulos */
+.data-item mark {
+    background-color: #f2dfb8;
+    color: #95683f;
+    padding: 1px 3px;
+    border-radius: 2px;
+    font-weight: 600;
+}
+
+
+/* Texto da descrição */
+.description-panel .panel-body {
+    inset: 50px 20px 12px;
+}
+
+/* Seção da galeria */
+.gallery-section {
+    margin-top: 24px;
+    border-top: 1px solid var(--gold-dark);
+    padding-top: 17px;
+}
+
+/* Título da galeria */
+.gallery-heading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 14px;
+    margin: 0 0 12px;
+    font-size: 20px;
+    font-weight: 400;
+    letter-spacing: 0.04em;
+}
+
+.gallery-heading::before,
+.gallery-heading::after {
+    content: '';
+    height: 1px;
+    background: var(--gold);
+    flex: 1;
+}
+
+/* Grade dos personagens: seis colunas */
+.cards {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: 18px 12px;
+    min-width: 0;
+    width: 100%;
+}
+
+/* Cartão individual */
+.character-card {
+    border: 0;
+    padding: 0;
+    background: transparent;
+    min-width: 0;
+    text-align: center;
+}
+
+/* Miniatura e sua moldura */
+
+.thumb {
+    height: 116px;
+    width: 100%;
+    background: url('assets/portrait-frame.png') center / contain no-repeat;
+    padding: 7% 7% 9%;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+/* Imagem da miniatura */
+.thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    display: block;
+}
+
+/* Texto provisório da miniatura */
+.thumb .placeholder {
+    font-size: 12px;
+}
+
+/* Nome sob cada personagem */
+.card-name {
+    display: block;
+    margin-top: 4px;
+    font-size: 14px;
+    overflow-wrap: anywhere;
+}
+
+/* Personagem selecionado */
+.character-card.selected .card-name {
+    font-weight: bold;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+}
+
+.character-card.selected .thumb {
+    filter: drop-shadow(0 0 1px var(--gold-dark));
+}
+
+/* Observação no rodapé */
+.note {
+    font-family: Arial, sans-serif;
+    font-size: 11px;
+    color: #bba080;
+    text-align: center;
+    margin-top: 18px;
+}
+
+/* Telas grandes */
+@media (min-width: 900px) {
+    .page {
+        padding-top: 22px;
+    }
+
+    .profile-layout {
+        grid-template-columns: 290px minmax(0, 1fr);
+        gap: 60px;
+    }
+
+    .portrait-frame {
+        width: 530px;
+        height: 530px;
+    }
+
+    .data-panel {
+        height: 135px;
+    }
+
+    .description-panel {
+        height: 280px;
+    }
+
+    .thumb {
+        height: 125px;
+    }
+}
+
+/* Telas médias: quatro colunas */
+@media (max-width: 800px) {
+    .cards {
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        gap: 14px 10px;
+    }
+}
+
+/* Celulares */
+@media (max-width: 520px) {
+    .page {
+        padding: 14px 14px 24px;
+    }
+
+    .profile-layout {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 18px;
+    }
+
+    .portrait-frame {
+        width: min(260px, 75vw);
+        height: min(410px, 118vw);
+    }
+
+    .right-col {
+        padding-top: 0;
+    }
+
+    .character-name {
+        text-align: center;
+    }
+
+    .data-panel {
+        height: 125px;
+    }
+
+    .description-panel {
+        height: 190px;
+    }
+
+    .gallery-section {
+        margin-top: 22px;
+    }
+
+    .cards {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px 8px;
+    }
+
+    .thumb {
+        height: 120px;
+    }
+
+    .card-name {
+        font-size: 12px;
+    }
+}
+
+/* MARGENS DO SITE INTEIRO */
+body {
+    margin: 0;
+    padding-left: 90px;
+    padding-right: 30px;
+    box-sizing: border-box;
+}
+
+</style>
+</head>
+<body>
+<main class="page">
+  <section class="profile-layout">
+    <div class="portrait-col">
+      <div class="portrait-frame"><div class="portrait-inner" id="mainPortrait"><div class="placeholder"><br>na pasta <b>images</b></div></div></div>
+      <div class="mode-tabs"><button type="button" class="active" data-mode="casual">Casual</button><button type="button" data-mode="explorer">Explorer</button></div>
+    </div>
+    <div class="right-col">
+      <h1 class="character-name" id="characterName">NOME: Haru Makio Toshy</h1>
+      <div class="panels">
+        <section class="data-panel" aria-label="Dados"><h2 class="panel-title">DADOS</h2><div class="panel-body" id="characterData">texto</div></section>
+        <section class="description-panel" aria-label="Descrição"><h2 class="panel-title">DESCRIÇÃO</h2><div class="panel-body" id="characterDescription">texto</div></section>
+      </div>
+    </div>
+  </section>
+  <section class="gallery-section">
+    <h2 class="gallery-heading">PERSONAGENS</h2>
+    <div class="cards" id="cards" aria-label="Todos os personagens"></div>
+  </section>
+  <p class="note">50 personagens em grade · clique em qualquer cartão para abrir o perfil</p>
+</main>
+<script>
+/*
+  COMO ADICIONAR SUAS ARTES:
+  1. Crie uma pasta chamada images ao lado deste index.html.
+  2. Coloque seus PNGs lá.
+  3. Em cada personagem, preencha casual, explorer e thumbnail com os caminhos,
+     por exemplo: 'images/haru-casual.png'.
+  4. Edite name, data e description para cada um dos 50 espaços.
+  Existem 50 personagens cadastrados; você pode duplicar uma linha para adicionar mais.
+*/
+
+  const characters = [
+    {
+        id: 'personagem-1',
+        name: 'Yunna Kines',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: {
+    aniversario: '14 de dezembro',
+    especie: 'Lobo-cinzento (Canis lupus)',
+    altura: '1,65 m',
+    crush: 'Haru Toshy',
+    ocupacao: 'Protagonista',
+    status: 'Viva'
+},
+        description: 'texto'
+    },
+    {
+        id: 'personagem-02',
+        name: 'Haru Toshy',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data:  {
+    aniversario: '01 de outubro',
+    especie: 'Lobo-cinzento (Canis lupus)',
+    altura: '1,80',
+    crush: 'Yunna Kines',
+    ocupacao: 'Antagonista, Guardião',
+    status: 'Vivo',
+        },
+        description: 'texto'
+  },
+    {
+        id: 'personagem-03',
+        name: 'Joltero',
+        casual: 'assets/joltero.png',
+        explorer: '',
+        thumbnail: 'assets/jolteropfp.png',
+        data: {
+    aniversario: '?',
+    especie: 'Tigre-siberiano (Panthera tigris tigris)',
+    altura: '2,10',
+    crush: '—',
+    ocupacao: 'Goon de Rennor',
+    status: 'Vivo',
+        },
+        description: 'texto'
+        },
+    {
+        id: 'personagem-04',
+        name: 'Kiara Uragiri',
+        casual: 'assets/kiara.png',
+        explorer: '',
+        thumbnail: 'assets/kiarapfp.png',
+        data:  {
+    aniversario: '1º de novembro',
+    especie: 'Leão (Panthera leo)',
+    altura: '1,65',
+    crush: '—',
+    ocupacao: 'Curandeira',
+    status: 'Viva'
+        },
+        description: 'Kiara Uragiri é uma leoa de pelagem azul e uma das curandeiras mais amigáveis da vila de Koshek. Gentil e serena, possui amplo conhecimento sobre ervas medicinais e prepara chás tão apreciados pelos moradores que alguns os consideram irresistíveis. Apesar de sua reputação acolhedora, há quem suspeite que sua bondade seja apenas uma fachada para esconder intenções obscuras. No entanto, nunca foram encontradas provas que sustentassem tais desconfianças, e Kiara continua exercendo seu ofício com a mesma tranquilidade de sempre.'
+    },
+    {
+        id: 'personagem-05',
+        name: 'Hina',
+        casual: 'assets/hina.png',
+        explorer: '',
+        thumbnail: 'assets/hinapfp.png',
+        data:  {
+    aniversario: '22 de abril',
+    especie: 'Gato doméstico (Felis catus)',
+    altura: '1,40',
+    crush: '—',
+    ocupacao: '—',
+    status: 'Viva',
+        },
+        description: 'Hina é uma gata tricolor com vitiligo, conhecida por sua beleza e fofura. Irmã mais nova de Riokko, está sempre animada e trata todos com gentileza. Apesar de sua natureza alegre e dócil, ela carrega as marcas de um encontro traumático na floresta, onde ela e Riokko se machucaram ao encontrar um grupo de gatos maldosos, que mais tarde foi descoberto pertencer ao bando de Rennor.'
+    },
+    {
+    id: 'personagem-05',
+    name: 'Riokko',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: {
+    aniversario: '15 de maio',
+    especie: 'Gato doméstico (Felis catus)',
+    altura: '1,55',
+    crush: '—',
+    ocupacao: '—',
+    status: 'Vivo',
+        },
+        description: 'texto'
+    },
+    {
+        id: 'personagem-07',
+        name: 'Toshiba Nakatski',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-08',
+        name: 'LOBO',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-09',
+        name: 'Fyrea',
+        casual: 'assets/fyrea.png',
+        explorer: '',
+        thumbnail: 'assets/fyreapfp.png',
+        data: {
+    aniversario: '02 de julho',
+    especie: 'Lince-do-deserto (Caracal caracal)',
+    altura: '1,70',
+    crush: '—',
+    ocupacao: 'Exploradora',
+    status: 'Viva',
+        },
+        description: 'texto'
+    },
+    {
+        id: 'personagem-10',
+        name: 'Derick',
+        casual: 'assets/derick.png',
+        explorer: '',
+        thumbnail: 'assets/derickpfp.png',
+        data: {
+    aniversario: '07 de julho',
+    especie: 'Lince-do-canadá (Lynx canadensis)',
+    altura: '1,70',
+    crush: '—',
+    ocupacao: 'Explorador',
+    status: 'Vivo',
+        },
+        description: 'Derick é orgulhoso, teimoso e extremamente curioso. Autoproclama-se um herói perfeito, convencido de que é forte, bonito e o melhor detetive e explorador que existe. Adora se exibir e tenta parecer inteligente, mas acaba frequentemente falando besteiras. Apesar de seus discursos grandiosos antes das batalhas, é bastante medroso e costuma entrar em pânico quando as coisas saem do controle, revelando sua falsa coragem. Seus pais praticamente não se importam com ele, permitindo que tenha liberdade quase total para sair e explorar o mundo, mesmo sendo tão jovem. Derick insiste em dizer que eles são apenas legais e descontraídos, mas, na verdade, odeia a falta de preocupação deles. Por trás de sua arrogância e de suas tentativas ridículas de bancar o herói, esconde a mágoa de não se sentir importante e o desejo de ser notado e reconhecido.'
+    },
+    {
+        id: 'personagem-11',
+        name: 'Personagem 11',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-12',
+        name: 'Personagem 12',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-13',
+        name: 'Personagem 13',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-14',
+        name: 'Personagem 14',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-15',
+        name: 'Personagem 15',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-16',
+        name: 'Personagem 16',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-17',
+        name: 'Personagem 17',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-18',
+        name: 'Personagem 18',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-19',
+        name: 'Personagem 19',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-20',
+        name: 'Personagem 20',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-21',
+        name: 'Personagem 21',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-22',
+        name: 'Personagem 22',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-23',
+        name: 'Personagem 23',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-24',
+        name: 'Personagem 24',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-25',
+        name: 'Personagem 25',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-26',
+        name: 'Personagem 26',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-27',
+        name: 'Personagem 27',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-28',
+        name: 'Personagem 28',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-29',
+        name: 'Personagem 29',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-30',
+        name: 'Personagem 30',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-31',
+        name: 'Personagem 31',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-32',
+        name: 'Personagem 32',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-33',
+        name: 'Personagem 33',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-34',
+        name: 'Personagem 34',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-35',
+        name: 'Personagem 35',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-36',
+        name: 'Personagem 36',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-37',
+        name: 'Personagem 37',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-38',
+        name: 'Personagem 38',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-39',
+        name: 'Personagem 39',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-40',
+        name: 'Personagem 40',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-41',
+        name: 'Personagem 41',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-42',
+        name: 'Personagem 42',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-43',
+        name: 'Personagem 43',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-44',
+        name: 'Personagem 44',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-45',
+        name: 'Personagem 45',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-46',
+        name: 'Personagem 46',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-47',
+        name: 'Personagem 47',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-48',
+        name: 'Personagem 48',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-49',
+        name: 'Personagem 49',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    },
+    {
+        id: 'personagem-50',
+        name: 'Personagem 50',
+        casual: '',
+        explorer: '',
+        thumbnail: '',
+        data: 'texto',
+        description: 'texto'
+    }
+];
+let selectedIndex=0, currentMode='casual';
+const $=id=>document.getElementById(id);
+function addImage(container,src,alt,placeholder){
+  container.innerHTML='';
+  if(src){const img=document.createElement('img');img.src=src;img.alt=alt;img.onerror=()=>{container.innerHTML='<div class="placeholder">Imagem não encontrada</div>'};container.appendChild(img)}
+  else container.innerHTML='<div class="placeholder">'+placeholder+'</div>';
+}
+
+function renderCharacterData(data) {
+    const container = $('characterData');
+    container.innerHTML = '';
+
+    const fields = [
+        ['Aniversário', 'aniversario'],
+        ['Espécie', 'especie'],
+        ['Altura', 'altura'],
+        ['Crush', 'crush'],
+        ['Ocupação', 'ocupacao'],
+        ['Status', 'status']
+    ];
+
+    const grid = document.createElement('div');
+    grid.className = 'data-grid';
+
+    fields.forEach(([title, key]) => {
+        const item = document.createElement('div');
+        item.className = 'data-item';
+
+        const mark = document.createElement('mark');
+        mark.textContent = title + ':';
+
+        const value = document.createTextNode(
+            ' ' + (data && typeof data === 'object' && data[key] != null
+                ? data[key]
+                : '—')
+        );
+
+        item.append(mark, value);
+        grid.appendChild(item);
+    });
+
+    container.appendChild(grid);
+}
+
+function renderProfile(){
+  const c = characters[selectedIndex];
+
+if (!c[currentMode]) {
+    currentMode = c.casual ? 'casual' : 'explorer';
+}
+
+$('characterName').textContent = 'NOME: ' + c.name;
+  renderCharacterData(c.data);
+  $('characterDescription').textContent=c.description||'texto';
+  addImage($('mainPortrait'),c[currentMode],c.name,'EM BREVE');
+  document.querySelectorAll('.mode-tabs button').forEach(b => {
+    const mode = b.dataset.mode;
+    const hasImage = Boolean(c[mode]);
+
+    b.style.display = hasImage ? '' : 'none';
+    b.classList.toggle('active', mode === currentMode);
+});
+  renderCards();
+}
+function renderCards(){
+  const holder=$('cards');holder.innerHTML='';
+  characters.forEach((c,index)=>{
+    const button=document.createElement('button');button.type='button';button.className='character-card'+(index===selectedIndex?' selected':'');button.setAttribute('aria-label','Selecionar '+c.name);
+    const thumb=document.createElement('div');thumb.className='thumb';
+    addImage(thumb,c.thumbnail||c.casual,c.name,'OC');
+    const label=document.createElement('span');label.className='card-name';label.textContent=c.name;
+    button.append(thumb,label);button.addEventListener('click',()=>{selectedIndex=index;currentMode='casual';renderProfile();$('characterName').scrollIntoView({behavior:'smooth',block:'start'})});holder.appendChild(button);
+  });
+}
+document.querySelectorAll('.mode-tabs button').forEach(b=>b.addEventListener('click',()=>{currentMode=b.dataset.mode;renderProfile()}));
+renderProfile();
+</script>
+</body>
+</html>

@@ -1,0 +1,1 @@
+Coloque aqui os PNGs das suas personagens. Depois indique os caminhos no array characters do index.html.
